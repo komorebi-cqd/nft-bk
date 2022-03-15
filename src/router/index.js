@@ -72,14 +72,21 @@ export const constantRoutes = [
         path: 'agency',
         name: 'Agency',
         component: () => import('@/views/agency/index'),
-        meta: { title: '机构账号',icon: 'tree' }
+        meta: { title: '机构账号', icon: 'tree' }
       },
       {
         path: 'add-agency',
         name: 'Add-Agency',
         hidden: true,
-        component: () => import('@/views/addAgency/index'),
+        component: () => import('@/views/agency/addAgency'),
         meta: { title: '添加机构', icon: 'tree' }
+      },
+      {
+        path: 'edit-agency/:agencyId',
+        name: 'Edit-Agency',
+        hidden: true,
+        component: () => import('@/views/agency/editAgency'),
+        meta: { title: '编辑机构', icon: 'tree' }
       },
       {
         path: 'creators',
@@ -91,14 +98,35 @@ export const constantRoutes = [
   },
 
   {
-    path: '/form',
+    path: '/dynamic',
     component: Layout,
+    redirect: '/dynamic/trends',
+    name: 'Dynamic',
+    meta: { title: '动态 NFT', icon: 'el-icon-s-help' },
     children: [
       {
-        path: 'index',
-        name: 'Form',
-        component: () => import('@/views/form/index'),
-        meta: { title: 'Form', icon: 'form' }
+        path: 'trends',
+        name: 'Trends',
+        component: () => import('@/views/trends/index'),
+        meta: { title: '动态', icon: 'form' }
+      },
+      {
+        path: 'nft',
+        name: 'Nft',
+        component: () => import('@/views/nft/index'),
+        meta: { title: 'NFT', icon: 'form' }
+      },
+      {
+        path: 'comment',
+        name: 'Comment',
+        component: () => import('@/views/comment/index'),
+        meta: { title: '评论', icon: 'form' }
+      },
+      { 
+        path: 'report',
+        name: 'Report',
+        component: () => import('@/views/report/index'),
+        meta: { title: '举报', icon: 'form' }
       }
     ]
   },

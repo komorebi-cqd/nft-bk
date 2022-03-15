@@ -12,7 +12,9 @@
                     @click="handleSearch"
                 ></el-button>
             </el-input>
-            <el-button @click="goAddAgency" type="primary" plain>添加机构</el-button>
+            <el-button @click="goAddAgency" type="primary" plain
+                >添加机构</el-button
+            >
         </div>
         <el-table
             :data="tableData"
@@ -68,7 +70,9 @@
                         @click="resetPassword(scope.row.userId)"
                         >重置登录密码</el-button
                     >
-                    <el-button size="mini">编辑</el-button>
+                    <el-button size="mini" @click="goEditView(scope.row)"
+                        >编辑</el-button
+                    >
                 </template>
             </el-table-column>
         </el-table>
@@ -94,11 +98,11 @@ export default {
             total: 0,
             pageSize: 10,
             currentPage: 1,
-            input: '',
+            input: "",
             tableData: [
                 {
                     userId: 1,
-                    agencyName: "河南博物馆",
+                    agencyName: "北京博物馆",
                     account: "12345678912",
                     operator: "李四",
                     operatorPhone: "13333333333",
@@ -113,7 +117,7 @@ export default {
                     userId: 66,
                     agencyName: "河南博物馆",
                     account: "12345678912",
-                    operator: "李四",
+                    operator: "李白",
                     operatorPhone: "13333333333",
                     releasesNum: 666,
                     nftNum: 5,
@@ -126,10 +130,19 @@ export default {
         };
     },
     methods: {
-        goAddAgency(){
+        goAddAgency() {
             this.$router.push({
-                name: 'Add-Agency'
-            })
+                name: "Add-Agency",
+            });
+        },
+        goEditView(data) {
+            this.$router.push({
+                name: "Edit-Agency",
+                params: {
+                    data,
+                    agencyId: data.userId,
+                },
+            });
         },
         handleChange(current) {
             console.log(current);
