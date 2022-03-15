@@ -1,9 +1,13 @@
 <template>
-    <div class="user-container" style="margin: 10px;">
+    <div class="user-container" style="margin: 10px">
+        <div class="top">
+            <el-input placeholder="请输入内容" v-model="input" class="input-with-select">
+                <el-button slot="append" icon="el-icon-search" @click="handleSearch"></el-button>
+            </el-input>
+        </div>
         <el-table
             :data="tableData"
             highlight-current-row
-            @current-change="handleCurrentChange"
             border
             style="width: 100%"
         >
@@ -59,6 +63,18 @@
                 </template>
             </el-table-column>
         </el-table>
+
+        <el-pagination
+            background
+            layout="prev, pager, next"
+            @current-change="handleChange"
+            hide-on-single-page
+            :total="total"
+            :page-size="pageSize"
+            :current-page="currentPage"
+            class="pagination"
+        >
+        </el-pagination>
     </div>
 </template>
 
@@ -66,6 +82,10 @@
 export default {
     data() {
         return {
+            total: 0,
+            pageSize: 10,
+            currentPage: 1,
+            input: '',
             tableData: [
                 {
                     userId: 1,
@@ -118,8 +138,27 @@ export default {
             ],
         };
     },
+    methods:{
+        handleChange(current) {
+            console.log(current);
+            this.currentPage = current;
+        },
+        handleSearch(){
+            console.log(this.input);
+        }
+
+    }
 };
 </script>
 
 <style lang="scss" scoped>
+.top{
+    display: flex;
+    justify-content: center;
+    margin: 20px 0;
+}
+.input-with-select{
+    width: 400px;
+}
+
 </style>

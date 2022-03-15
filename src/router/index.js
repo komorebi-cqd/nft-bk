@@ -72,7 +72,14 @@ export const constantRoutes = [
         path: 'agency',
         name: 'Agency',
         component: () => import('@/views/agency/index'),
-        meta: { title: '机构账号', icon: 'tree' }
+        meta: { title: '机构账号',icon: 'tree' }
+      },
+      {
+        path: 'add-agency',
+        name: 'Add-Agency',
+        hidden: true,
+        component: () => import('@/views/addAgency/index'),
+        meta: { title: '添加机构', icon: 'tree' }
       },
       {
         path: 'creators',
