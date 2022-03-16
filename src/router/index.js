@@ -124,11 +124,25 @@ export const constantRoutes = [
             meta: { title: '个人NFT' }
           },
           {
+            path: 'personal-detail/:detailId',
+            component: () => import('@/views/nft/personal-detail'),
+            name: 'Personal-Detail',
+            hidden: true,
+            meta: { title: '个人NFT详情' }
+          },
+          {
             path: 'nft-agency',
             component: () => import('@/views/nft/nft-agency'),
             name: 'Nft-Agency',
             meta: { title: '机构NFT' }
-          }
+          },
+          {
+            path: 'agency-detail/:detailId',
+            component: () => import('@/views/nft/agency-detail'),
+            name: 'Agency-Detail',
+            hidden: true,
+            meta: { title: '机构NFT详情' }
+          },
         ]
       },
       {
@@ -152,7 +166,7 @@ export const constantRoutes = [
           }
         ]
       },
-      { 
+      {
         path: 'report',
         name: 'Report',
         redirect: '/dynamic/report/report-trends',

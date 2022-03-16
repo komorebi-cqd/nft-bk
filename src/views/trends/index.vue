@@ -35,7 +35,7 @@
             <el-table-column property="browseNums" label="浏览次数" width="80">
             </el-table-column>
             <el-table-column
-                property="registerDate"
+                property="releaseDate"
                 label="发布时间"
                 width="180"
             >
@@ -49,7 +49,7 @@
                         icon="el-icon-info"
                         icon-color="red"
                         title="你确定要删除这个动态吗？"
-                        @onConfirm="deleteTrends(scope.row.trendsId)"
+                        @confirm="deleteTrends(scope.row.trendsId)"
                     >
                         <el-button slot="reference">删除</el-button>
                     </el-popconfirm>
