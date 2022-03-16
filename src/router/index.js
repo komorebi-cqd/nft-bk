@@ -113,83 +113,68 @@ export const constantRoutes = [
       {
         path: 'nft',
         name: 'Nft',
+        redirect: '/dynamic/nft/nft-personal',
         component: () => import('@/views/nft/index'),
-        meta: { title: 'NFT', icon: 'form' }
+        meta: { title: 'NFT', icon: 'form' },
+        children: [
+          {
+            path: 'nft-personal',
+            component: () => import('@/views/nft/nft-personal'),
+            name: 'Nft-Personal',
+            meta: { title: '个人NFT' }
+          },
+          {
+            path: 'nft-agency',
+            component: () => import('@/views/nft/nft-agency'),
+            name: 'Nft-Agency',
+            meta: { title: '机构NFT' }
+          }
+        ]
       },
       {
         path: 'comment',
         name: 'Comment',
         component: () => import('@/views/comment/index'),
-        meta: { title: '评论', icon: 'form' }
+        redirect: '/dynamic/comment/comment-trends',
+        meta: { title: '评论', icon: 'form' },
+        children: [
+          {
+            path: 'comment-trends',
+            component: () => import('@/views/comment/comment-trends'),
+            name: 'Comment-Trends',
+            meta: { title: '动态评论' }
+          },
+          {
+            path: 'comment-nft',
+            component: () => import('@/views/comment/comment-nft'),
+            name: 'Comment-Nft',
+            meta: { title: 'NFT评论' }
+          }
+        ]
       },
       { 
         path: 'report',
         name: 'Report',
+        redirect: '/dynamic/report/report-trends',
         component: () => import('@/views/report/index'),
-        meta: { title: '举报', icon: 'form' }
-      }
-    ]
-  },
-
-  {
-    path: '/nested',
-    component: Layout,
-    redirect: '/nested/menu1',
-    name: 'Nested',
-    meta: {
-      title: 'Nested',
-      icon: 'nested'
-    },
-    children: [
-      {
-        path: 'menu1',
-        component: () => import('@/views/nested/menu1/index'), // Parent router-view
-        name: 'Menu1',
-        meta: { title: 'Menu1' },
+        meta: { title: '举报', icon: 'form' },
         children: [
           {
-            path: 'menu1-1',
-            component: () => import('@/views/nested/menu1/menu1-1'),
-            name: 'Menu1-1',
-            meta: { title: 'Menu1-1' }
+            path: 'report-trends',
+            component: () => import('@/views/report/report-trends'),
+            name: 'Report-Trends',
+            meta: { title: '动态举报' }
           },
           {
-            path: 'menu1-2',
-            component: () => import('@/views/nested/menu1/menu1-2'),
-            name: 'Menu1-2',
-            meta: { title: 'Menu1-2' },
-            children: [
-              {
-                path: 'menu1-2-1',
-                component: () => import('@/views/nested/menu1/menu1-2/menu1-2-1'),
-                name: 'Menu1-2-1',
-                meta: { title: 'Menu1-2-1' }
-              },
-              {
-                path: 'menu1-2-2',
-                component: () => import('@/views/nested/menu1/menu1-2/menu1-2-2'),
-                name: 'Menu1-2-2',
-                meta: { title: 'Menu1-2-2' }
-              }
-            ]
-          },
-          {
-            path: 'menu1-3',
-            component: () => import('@/views/nested/menu1/menu1-3'),
-            name: 'Menu1-3',
-            meta: { title: 'Menu1-3' }
+            path: 'report-nft',
+            component: () => import('@/views/report/report-nft'),
+            name: 'Report-Nft',
+            meta: { title: 'NFT举报' }
           }
         ]
-      },
-      {
-        path: 'menu2',
-        component: () => import('@/views/nested/menu2/index'),
-        name: 'Menu2',
-        meta: { title: 'menu2' }
       }
     ]
   },
-
   {
     path: 'external-link',
     component: Layout,

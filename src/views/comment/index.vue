@@ -1,15 +1,5 @@
 <template>
-  <div class="comment-container">
-      评论
+  <div style="padding:30px;">
+    <router-view />
   </div>
 </template>
-
-<script>
-export default {
-
-}
-</script>
-
-<style lang="scss" scoped>
-
-</style>

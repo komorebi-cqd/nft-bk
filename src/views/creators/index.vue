@@ -42,7 +42,6 @@
             <el-table-column
                 property="applyDate"
                 label="申请时间"
-                width="180"
             >
             </el-table-column>
             </el-table-column>
