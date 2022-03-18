@@ -141,7 +141,10 @@ export default {
                 if (valid) {
                     this.loading = true;
                     this.$store
-                        .dispatch("user/login", this.loginForm)
+                        .dispatch("user/login", {
+                            loginId: this.loginForm.username,
+                            password: this.loginForm.password,
+                        })
                         .then(() => {
                             this.$router.push({ path: this.redirect || "/" });
                             this.loading = false;
@@ -257,10 +260,10 @@ $light_gray: #eee;
             font-weight: bold;
         }
     }
-    .selectUser{
-      display: flex;
-      justify-content: center;
-      margin-bottom: 25px;
+    .selectUser {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 25px;
     }
 
     .show-pwd {

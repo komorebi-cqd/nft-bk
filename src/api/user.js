@@ -1,8 +1,19 @@
 import request from '@/utils/request'
 
-export function login(data) {
+
+//机构登录
+export function agencyLogin(data) {
   return request({
-    url: '/vue-admin-template/user/login',
+    url: '/institutionAccount/institutionLogin',
+    method: 'post',
+    data
+  })
+}
+
+//管理员登录
+export function rootLogin(data) {
+  return request({
+    url: '/institutionAccount/rootLogin',
     method: 'post',
     data
   })
