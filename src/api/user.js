@@ -19,6 +19,18 @@ export function rootLogin(data) {
   })
 }
 
+//查询当前登录用户信息
+export function queryUserInfo() {
+  return request({
+    url: '/institutionAccount/queryLoginInstitutionDate',
+    method: 'get'
+  })
+}
+
+
+
+
+
 export function getInfo(token) {
   return request({
     url: '/vue-admin-template/user/info',

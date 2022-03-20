@@ -40,20 +40,21 @@ service.interceptors.response.use(
    * You can also judge the status by HTTP Status Code
    */
   response => {
-    console.log(response,'111111');
+    if(response.headers.token){
+      // 响应头里面如果有这个字段，我们需要将这个字段存储到 localstorage，之后的请求都需要将这个 token 带到服务器
+      // 这一步很重要，一定要将 token 存储到本地
+      localStorage.token = response.headers.token;
+    }
     const res = response.data;
-    
-
-    // if the custom code is not 20000, it is judged as an error.
-    if (res.code !== 20000) {
+    if (res.code !== 'SUC0000') {
       Message({
-        message: res.message || 'Error',
+        message: res.mes || 'Error',
         type: 'error',
         duration: 5 * 1000
       })
 
       // 50008: Illegal token; 50012: Other clients logged in; 50014: Token expired;
-      if (res.code === 50008 || res.code === 50012 || res.code === 50014) {
+      if (response.status == 401) {
         // to re-login
         MessageBox.confirm('You have been logged out, you can cancel to stay on this page, or log in again', 'Confirm logout', {
           confirmButtonText: 'Re-Login',

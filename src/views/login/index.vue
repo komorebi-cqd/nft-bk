@@ -75,16 +75,18 @@ export default {
     name: "Login",
     data() {
         const validateUsername = (rule, value, callback) => {
-            if (!validUsername(value)) {
-                callback(new Error("Please enter the correct user name"));
+            if (value.length < 1) {
+                callback(
+                    new Error("The name can not empty")
+                );
             } else {
                 callback();
             }
         };
         const validatePassword = (rule, value, callback) => {
-            if (value.length < 6) {
+            if (value.length < 1) {
                 callback(
-                    new Error("The password can not be less than 6 digits")
+                    new Error("The password can not empty")
                 );
             } else {
                 callback();
@@ -93,8 +95,8 @@ export default {
         return {
             user: 0,
             loginForm: {
-                username: "admin",
-                password: "111111",
+                username: "root",
+                password: "root",
             },
             loginRules: {
                 username: [
@@ -124,6 +126,10 @@ export default {
             },
             immediate: true,
         },
+        user(){
+            this.loginForm.username = '';
+            this.loginForm.password = '';
+        }
     },
     methods: {
         showPwd() {
@@ -142,6 +148,7 @@ export default {
                     this.loading = true;
                     this.$store
                         .dispatch("user/login", {
+                            user: this.user,
                             loginId: this.loginForm.username,
                             password: this.loginForm.password,
                         })

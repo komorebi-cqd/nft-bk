@@ -1,4 +1,4 @@
-import { agencyLogin,rootLogin, logout, getInfo } from '@/api/user'
+import { agencyLogin, rootLogin, queryUserInfo, logout, getInfo } from '@/api/user'
 import { getToken, setToken, removeToken } from '@/utils/auth'
 import { resetRouter } from '@/router'
 
@@ -28,9 +28,24 @@ const mutations = {
 const actions = {
   // user login
   login({ commit }, userInfo) {
+    let { user, loginId, password } = userInfo;
+    let loginMethod;
+    if (user === 0) {
+      loginMethod = rootLogin;
+    } else {
+      loginMethod = agencyLogin;
+    }
     return new Promise((resolve, reject) => {
-      agencyLogin(userInfo).then(res => {
-        console.log(res);
+      loginMethod({
+        loginId,
+        password
+      }).then(res => {
+        console.log(res, 22222);
+        if (res.code === 'SUC0000') {
+          queryUserInfo().then(res => {
+            console.log(res, 3333,localStorage.getItem('token'));
+          })
+        }
         // const { data } = res
         // commit('SET_TOKEN', data.token)
         // setToken(data.token)
