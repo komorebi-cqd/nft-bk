@@ -43,6 +43,7 @@ const actions = {
             let accessedRoutes
             //超级管理员为admin角色，能访问所有路由
             if (roles.includes('admin')) {
+                console.log(1111);
                 accessedRoutes = asyncRouters || []
             } else {
                 accessedRoutes = filterAsyncRoutes(asyncRouters, roles)

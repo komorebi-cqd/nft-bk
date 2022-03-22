@@ -39,7 +39,15 @@ module.exports = {
     // before: require('./mock/mock-server.js')
     proxy: {
       '/institutionAccount': {
-        target: 'http://4k9v843328.zicp.vip:31369',
+        target: 'http://192.168.3.122:8089',
+        changeOrigin: true
+      },
+      '/user': {
+        target: 'http://192.168.3.122:8089',
+        changeOrigin: true
+      },
+      '/nft': {
+        target: 'http://192.168.3.122:8089',
         changeOrigin: true
       }
     }

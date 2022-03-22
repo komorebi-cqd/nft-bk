@@ -40,8 +40,13 @@ import userInfoRouter from './modules/userInfo'
 
 export const constantRoutes = [
   {
-    path: '/login',
-    component: () => import('@/views/login/index'),
+    path: '/adminLogin',
+    component: () => import('@/views/login/adminLogin/index'),
+    hidden: true
+  },
+  {
+    path: '/agencyLogin',
+    component: () => import('@/views/login/agencyLogin/index'),
     hidden: true
   },
 

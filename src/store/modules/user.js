@@ -73,6 +73,7 @@ const actions = {
         }
         commit('SET_USER', data);
         let roles = [];
+        console.log(data,'getInfo:::');
         if (data.institutionName === '元界2') {
           roles = ['admin'];
           commit('SET_ROLES', roles)

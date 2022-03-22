@@ -17,57 +17,66 @@
             >
         </div>
         <el-table
-            :data="tableData"
+            :data="agencyList"
             highlight-current-row
             border
             style="width: 100%"
+            v-loading="loading"
         >
-            <el-table-column property="userId" label="用户ID" width="80">
+            <!-- <el-table-column property="userId" label="用户ID" width="80">
+            </el-table-column> -->
+            <el-table-column property="institutionName" label="机构名称" width="120">
             </el-table-column>
-            <el-table-column property="agencyName" label="机构名称" width="120">
+            <el-table-column property="loginId" label="账号" width="80">
             </el-table-column>
-            <el-table-column property="account" label="账号" width="120">
-            </el-table-column>
-            <el-table-column property="operator" label="运营者" width="80">
+            <el-table-column property="operatorName" label="运营者" width="80">
             </el-table-column>
             <el-table-column
-                property="operatorPhone"
+                property="operatorIphone"
                 label="运营者电话"
                 width="120"
             >
             </el-table-column>
-            <el-table-column
-                property="releasesNum"
-                label="发布内容数"
-                width="80"
-            >
+            <el-table-column property="nftAmount" label="NFT数" width="80">
             </el-table-column>
-            <el-table-column property="nftNum" label="NFT数" width="80">
+            <el-table-column property="remainingSum" label="余额" width="80">
             </el-table-column>
-            <el-table-column property="balance" label="余额" width="80">
-            </el-table-column>
-            <el-table-column property="authStatus" label="认证状态" width="100">
+            <el-table-column property="isTimeSale" label="定时发售" width="100">
                 <template slot-scope="scope">
-                    {{ authStatus(scope.row.authStatus) }}
+                    {{ parseInt(scope.row.isTimeSale) ? '支持': '不支持'  }}
+                </template>
+            </el-table-column>
+            <el-table-column property="isForwardBuying" label="提前购买" width="100">
+                <template slot-scope="scope">
+                    {{ parseInt(scope.row.isForwardBuying) ? '支持': '不支持'  }}
+                </template>
+            </el-table-column>
+            <el-table-column property="isDonation" label="转赠等待" width="100">
+                <template slot-scope="scope">
+                    {{parseInt(scope.row.isDonation) === -1 ? '不支持': parseInt(scope.row.isDonation)  }}
+                </template>
+            </el-table-column>
+            <el-table-column property="isResell" label="转卖等待" width="100">
+                <template slot-scope="scope">
+                    {{parseInt(scope.row.isResell) === -1 ? '不支持': parseInt(scope.row.isDonation)  }}
+                </template>
+            </el-table-column>
+            <el-table-column property="isTimeSale" label="评论" width="100">
+                <template slot-scope="scope">
+                    {{ parseInt(scope.row.isComment) ? '支持': '不支持'  }}
                 </template>
             </el-table-column>
             <el-table-column
                 property="registerDate"
                 label="注册时间"
-                width="180"
             >
             </el-table-column>
-            <el-table-column
-                property="registerSource"
-                label="注册来源"
-                width="100"
-            >
             </el-table-column>
-            <el-table-column label="操作" width="160">
+            <el-table-column label="操作" >
                 <template slot-scope="scope">
                     <el-button
                         size="mini"
-                        @click="resetPassword(scope.row.userId)"
+                        @click="resetPassword(scope.row.loginId)"
                         >重置登录密码</el-button
                     >
                     <el-button size="mini" @click="goEditView(scope.row)"
@@ -92,44 +101,36 @@
 </template>
 
 <script>
+import { queryInstitutionList, resetPassword } from "@/api/user";
+
 export default {
     data() {
         return {
             total: 0,
-            pageSize: 10,
+            pageSize: 1,
             currentPage: 1,
             input: "",
-            tableData: [
-                {
-                    userId: 1,
-                    agencyName: "北京博物馆",
-                    account: "12345678912",
-                    operator: "李四",
-                    operatorPhone: "13333333333",
-                    releasesNum: 666,
-                    nftNum: 5,
-                    balance: 100,
-                    authStatus: 0,
-                    registerDate: "2022-02-21 17:10:42",
-                    registerSource: "后台",
-                },
-                {
-                    userId: 66,
-                    agencyName: "河南博物馆",
-                    account: "12345678912",
-                    operator: "李白",
-                    operatorPhone: "13333333333",
-                    releasesNum: 666,
-                    nftNum: 5,
-                    balance: 100,
-                    authStatus: 1,
-                    registerDate: "2022-02-21 17:10:42",
-                    registerSource: "后台",
-                },
-            ],
+            agencyList: [],
+            loading: false,
         };
     },
+    created() {
+        this.getAgencyList();
+    },
     methods: {
+        getAgencyList() {
+            this.loading = true;
+            queryInstitutionList({
+                pageNum: this.currentPage,
+                pageSize: this.pageSize,
+            }).then((res) => {
+                this.total = res.data.total;
+                this.agencyList = res.data.list;
+                this.loading = false;
+            }).catch(err => {
+                this.loading = false;
+            });
+        },
         goAddAgency() {
             this.$router.push({
                 name: "Add-Agency",
@@ -140,13 +141,13 @@ export default {
                 name: "Edit-Agency",
                 params: {
                     data,
-                    agencyId: data.userId,
+                    agencyId: data.loginId,
                 },
             });
         },
         handleChange(current) {
-            console.log(current);
             this.currentPage = current;
+            this.getAgencyList();
         },
         authStatus(auth) {
             switch (auth) {
@@ -158,8 +159,19 @@ export default {
                     break;
             }
         },
-        resetPassword(agencyId) {
-            console.log(`重置密码,机构ID   ${agencyId}`);
+        resetPassword(loginId) {
+            resetPassword({ loginId }).then((res) => {
+                this.$alert(`密码：${res.data.password}`, "重置成功", {
+                    confirmButtonText: "复制",
+                    callback: (action) => {
+                        this.$copyText(res.data.password);
+                        this.$message({
+                            type: "success",
+                            message: `复制成功`,
+                        });
+                    },
+                });
+            });
         },
         handleSearch() {
             console.log(this.input);

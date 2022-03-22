@@ -27,9 +27,50 @@ export function queryUserInfo() {
   })
 }
 
+//添加机构
+export function addAgency(data) {
+  return request({
+    url: '/institutionAccount/register',
+    method: 'post',
+    data
+  })
+}
 
 
+//修改机构
+export function reviseAgency(data) {
+  return request({
+    url: '/institutionAccount/modifiedData',
+    method: 'post',
+    data
+  })
+}
+//查询机构
+export function queryInstitutionList(params) {
+  return request({
+    url: '/institutionAccount/queryInstitutionList',
+    method: 'get',
+    params
+  })
+}
 
+//重置密码
+export function resetPassword(data) {
+  return request({
+    url: '/institutionAccount/resetPassword',
+    method: 'post',
+    data
+  })
+}
+
+//查询用户
+export function queryUser(params) {
+  return request({
+    url: '/user/queryUsers',
+    method: 'get',
+    params
+  })
+}
 
 export function getInfo(token) {
   return request({

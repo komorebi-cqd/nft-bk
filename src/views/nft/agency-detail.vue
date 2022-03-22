@@ -3,15 +3,15 @@
         <ul class="detail-list">
             <li>
                 <div class="left-title">NFT ID</div>
-                <div class="right-content">{{ nftDetail.NftId }}</div>
+                <div class="right-content">{{ nftDetail.nftRecording }}</div>
             </li>
             <li>
                 <div class="left-title">机构名称</div>
-                <div class="right-content">{{ nftDetail.agencyName }}</div>
+                <div class="right-content">{{ nftDetail.institutionName }}</div>
             </li>
             <li>
                 <div class="left-title">价格</div>
-                <div class="right-content">{{ nftDetail.price }}</div>
+                <div class="right-content">{{ nftDetail.nftPrice }}</div>
             </li>
 
             <li>
@@ -22,38 +22,40 @@
             </li>
             <li>
                 <div class="left-title">媒体文件</div>
-                <div class="right-content">{{ nftDetail.trendsFile }}</div>
+                <div class="right-content">
+                    <img class="main-img" :src="nftDetail.nftFilePath" alt="">
+                </div>
             </li>
 
             <li>
                 <div class="left-title">描述</div>
-                <div class="right-content">{{ nftDetail.describe }}</div>
+                <div class="right-content">{{ nftDetail.nftDetails }}</div>
             </li>
             <li>
                 <div class="left-title">发售数量</div>
-                <div class="right-content">{{ nftDetail.saleAmount }}</div>
+                <div class="right-content">{{ nftDetail.nftQuantity }}</div>
             </li>
             <li>
                 <div class="left-title">已售次数</div>
-                <div class="right-content">{{ nftDetail.soldAmount }}</div>
+                <div class="right-content">{{ nftDetail.nftQuantity - nftDetail.nftSurplusQuantity }}</div>
             </li>
             <li>
                 <div class="left-title">状态</div>
                 <div class="right-content">
-                    {{ formatState(nftDetail.state) }}
+                    {{ formatState(parseInt(nftDetail.nftStatus)) }}
                 </div>
             </li>
             <li>
                 <div class="left-title">点赞次数</div>
-                <div class="right-content">{{ nftDetail.thumbsUp }}</div>
+                <div class="right-content">{{ nftDetail.likeAmount }}</div>
             </li>
             <li>
                 <div class="left-title">评论次数</div>
-                <div class="right-content">{{ nftDetail.comment }}</div>
+                <div class="right-content">{{ nftDetail.browseAmount }}</div>
             </li>
             <li>
                 <div class="left-title">是否允许评论</div>
-                <div class="right-content">否</div>
+                <div class="right-content">{{parseInt(nftDetail.isComment) ? '支持': '不支持'}}</div>
             </li>
             <li>
                 <div class="left-title">浏览次数</div>
@@ -61,11 +63,11 @@
             </li>
             <li>
                 <div class="left-title">发布时间</div>
-                <div class="right-content">{{ nftDetail.releaseDate }}</div>
+                <div class="right-content">{{ nftDetail.registerDate }}</div>
             </li>
             <li>
                 <div class="left-title">发售时间</div>
-                <div class="right-content">{{ nftDetail.saleDate }}</div>
+                <div class="right-content">{{ nftDetail.nftReleaseTime }}</div>
             </li>
         </ul>
         <el-button type="primary" @click="goBack">返回</el-button>
@@ -87,17 +89,17 @@ export default {
         formatState(state) {
             switch (state) {
                 case 0:
-                    return "待出售";
+                    return "下架";
                 case 1:
-                    return "出售中";
+                    return "挂售中";
                 case 2:
-                    return "已售罄";
+                    return "待发售";
                 case 3:
-                    return "已下架";
+                    return "售罄";
             }
         },
         goBack() {
-            this.$router.push({ name: "Nft-Personal" });
+            this.$router.go(-1);
         },
     },
 };
@@ -127,6 +129,10 @@ export default {
             padding: 10px 12px;
             font-weight: 400;
             color: #606266;
+            .main-img{
+                width: 100px;
+                height: 100px;
+            }
         }
     }
 }

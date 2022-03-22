@@ -2,7 +2,7 @@
 <template>
     <div class="dynamic-container" style="margin: 10px">
         <el-table
-            :data="tableData"
+            :data="recentList"
             highlight-current-row
             border
             style="width: 100%"
@@ -91,46 +91,39 @@
 </template>
 
 <script>
+import { queryRecentNft } from "@/api/nft";
+
 export default {
     data() {
         return {
             total: 0,
-            pageSize: 10,
+            pageSize: 1,
             currentPage: 1,
             input: "",
             trendsView: false,
             trendsViewFile: "",
             trendsViewFileType: 0,
-            tableData: [
-                {
-                    trendsId: 1,
-                    userId: 2,
-                    trendsType: 0, //0图片 1视频
-                    trendsFile:
-                        "https://img1.baidu.com/it/u=3944616627,2787035505&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=521",
-                    describe: "人间清醒",
-                    thumbsUp: 666,
-                    comment: 9999,
-                    browseNums: 5,
-                    releaseDate: "2022-02-21 17:10:42",
-                },
-                {
-                    trendsId: 99,
-                    userId: 2,
-                    trendsType: 1, //0图片 1视频
-                    trendsFile:
-                        "https://img1.baidu.com/it/u=3944616627,2787035505&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=521",
-                    describe:
-                        "春江潮水连海平，海上明月共潮生。滟滟随波千万里，何处春江无月明！",
-                    thumbsUp: 666,
-                    comment: 9999,
-                    browseNums: 5,
-                    releaseDate: "2022-02-21 17:10:42",
-                },
-            ],
+            loading: false,
+            recentList: [],
         };
     },
+    created(){
+        // this.getRecentNft();
+    },
     methods: {
+        getRecentNft(){
+            this.loading = true;
+            queryRecentNft({
+                pageNum: this.currentPage,
+                pageSize: this.pageSize,
+            }).then((res) => {
+                this.total = res.data.total;
+                this.recentList = res.data.list;
+                this.loading = false;
+            }).catch(err => {
+                this.loading = false;
+            });
+        },
         //删除动态
         deleteTrends(id) {
             console.log("删除动态id", id);

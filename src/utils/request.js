@@ -66,7 +66,12 @@ service.interceptors.response.use(
           })
         })
       }
-      return Promise.reject(new Error(res.message || 'Error'))
+      // Message({
+      //   message: res.mes || 'Error',
+      //   type: 'error',
+      //   duration: 5 * 1000
+      // })
+      return Promise.reject(new Error(res.msg || 'Error'))
     } else {
       return res
     }

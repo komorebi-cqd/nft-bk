@@ -1,28 +1,32 @@
 <template>
     <div class="nft-agency">
         <el-table
-            :data="tableData"
+            :data="recentList"
             highlight-current-row
             border
             style="width: 100%"
+            v-loading="loading"
         >
-            <el-table-column property="NftId" label="NFT ID" width="80">
+            <el-table-column property="nftRecording" label="NFT ID" width="80">
             </el-table-column>
-            <el-table-column property="agencyName" label="机构名称" width="80">
-            </el-table-column>
-
-            <el-table-column property="price" label="价格" width="80">
+            <el-table-column property="institutionName" label="机构名称" width="80">
             </el-table-column>
 
-            <el-table-column property="saleAmount" label="发售次数" width="80">
+            <el-table-column property="nftPrice" label="价格" width="80">
             </el-table-column>
 
-            <el-table-column property="soldAmount" label="已售次数" width="80">
+            <el-table-column property="nftQuantity" label="发售次数" width="80">
+            </el-table-column>
+
+            <el-table-column property="nftSurplusQuantity" label="已售次数" width="80">
+                <template slot-scope="scope">
+                    {{ scope.row.nftQuantity - scope.row.nftSurplusQuantity  }}
+                </template>
             </el-table-column>
 
             <el-table-column property="trendsType" label="动态类型" width="80">
                 <template slot-scope="scope">
-                    {{ scope.row.trendsType === 0 ? "图片" : "视频" }}
+                    {{ scope.row.trendsType === 0 ? "待修改" : "待修改" }}
                 </template>
             </el-table-column>
             <el-table-column property="trendsFile" label="媒体文件" width="80">
@@ -35,25 +39,25 @@
                     >
                 </template>
             </el-table-column>
-            <el-table-column property="describe" label="描述">
+            <el-table-column property="nftDetails" label="描述">
             </el-table-column>
-            <el-table-column property="thumbsUp" label="点赞" width="80">
+            <el-table-column property="likeAmount" label="点赞" width="80">
             </el-table-column>
-            <el-table-column property="comment" label="评论" width="80">
+            <el-table-column property="commentAmount" label="评论" width="80">
             </el-table-column>
-            <el-table-column property="browseNums" label="浏览次数" width="80">
+            <el-table-column property="browseAmount" label="浏览次数" width="80">
             </el-table-column>
-            <el-table-column property="state" label="状态" width="80">
+            <el-table-column property="nftType" label="状态" width="80">
                 <template slot-scope="scope">
-                    {{ formatState(scope.row.state) }}
+                    {{ formatState(scope.row.nftType) }}
                 </template>
             </el-table-column>
 
-            <el-table-column property="saleDate" label="发售时间" width="180">
+            <el-table-column property="nftReleaseTime" label="发售时间" width="180">
             </el-table-column>
 
             <el-table-column
-                property="releaseDate"
+                property="registerDate"
                 label="发布时间"
                 width="180"
             >
@@ -102,72 +106,57 @@
 </template>
 
 <script>
+import { queryRecentNft } from "@/api/nft";
+
 export default {
     data() {
         return {
             total: 0,
-            pageSize: 10,
+            pageSize: 1,
             currentPage: 1,
             input: "",
             trendsView: false,
             trendsViewFile: "",
             trendsViewFileType: 0,
-            tableData: [
-                {
-                    NftId: 1,
-                    agencyName: "xxxxx", //机构名称
-                    trendsType: 0, //0图片 1视频
-                    price: 99,
-                    saleAmount: 1000, //发售次数
-                    soldAmount: 666, //已售次数
-                    trendsFile:
-                        "https://img1.baidu.com/it/u=3944616627,2787035505&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=521",
-                    describe: "人间清醒",
-                    thumbsUp: 666, //点赞次数
-                    comment: 9999, //评论次数
-                    browseNums: 5, //浏览次数
-                    state: 0, //状态
-                    saleDate: "2022-02-21 17:10:42",
-                    releaseDate: "2022-02-21 17:10:42",
-                },
-                {
-                    NftId: 1,
-                    agencyName: "xxxxx", //机构名称
-                    trendsType: 0, //0图片 1视频
-                    price: 99,
-                    saleAmount: 1000, //发售次数
-                    soldAmount: 666, //已售次数
-                    trendsFile:
-                        "https://img1.baidu.com/it/u=3944616627,2787035505&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=521",
-                    describe: "人间清醒",
-                    thumbsUp: 666, //点赞次数
-                    comment: 9999, //评论次数
-                    browseNums: 5, //浏览次数
-                    state: 0, //状态
-                    saleDate: "2022-02-21 17:10:42",
-                    releaseDate: "2022-02-21 17:10:42",
-                },
-            ],
+            loading: false,
+            recentList: [],
         };
     },
+    created(){
+        this.getRecentNft();
+    },
     methods: {
+        //获取机构NFT信息
+        getRecentNft(){
+            this.loading = true;
+            queryRecentNft({
+                pageNum: this.currentPage,
+                pageSize: this.pageSize,
+            }).then((res) => {
+                this.total = res.data.total;
+                this.recentList = res.data.list;
+                this.loading = false;
+            }).catch(err => {
+                this.loading = false;
+            });
+        },
         //查看动态文件
         lookTrends(file) {
-            this.trendsViewFile = file.trendsFile;
-            this.trendsViewFileType = file.trendsType;
+            this.trendsViewFile = file.nftFilePath;
+            this.trendsViewFileType = 0;
             this.trendsView = true;
         },
         //格式化状态
         formatState(state) {
             switch (state) {
                 case 0:
-                    return "待出售";
+                    return "下架";
                 case 1:
-                    return "出售中";
+                    return "挂售中";
                 case 2:
-                    return "已售罄";
+                    return "待发售";
                 case 3:
-                    return "已下架";
+                    return "售罄";
             }
         },
         //去详情页面

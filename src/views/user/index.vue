@@ -6,60 +6,59 @@
             </el-input>
         </div>
         <el-table
-            :data="tableData"
+            :data="userList"
             highlight-current-row
             border
             style="width: 100%"
+            v-loading="loading"
         >
-            <el-table-column property="userId" label="用户ID" width="80">
+            <el-table-column property="id" label="用户ID" width="80">
             </el-table-column>
             <el-table-column property="nickName" label="昵称" width="80">
             </el-table-column>
-            <el-table-column property="phone" label="手机号" width="120">
+            <el-table-column property="iphone" label="手机号" width="120">
             </el-table-column>
-            <el-table-column property="wxId" label="微信ID" width="80">
-            </el-table-column>
-            <el-table-column property="isRealName" label="是否实名" width="80">
+            <!-- <el-table-column property="wxId" label="微信ID" width="80">
+            </el-table-column> -->
+            <el-table-column property="isAuthentication" label="是否实名" width="80">
                 <template slot-scope="scope">
-                    {{ scope.row.isRealName ? "否" : "是" }}
+                    {{ scope.row.isAuthentication ? "是" : "否" }}
                 </template>
             </el-table-column>
-            <el-table-column property="isTiedCard" label="是否绑卡" width="80">
+            <el-table-column property="isBindingBankCard" label="是否绑卡" width="80">
                 <template slot-scope="scope">
-                    {{ scope.row.isTiedCard ? "否" : "是" }}
+                    {{ scope.row.isBindingBankCard ? "是" : "否" }}
                 </template>
             </el-table-column>
-            <el-table-column property="userName" label="姓名" width="80">
+            <el-table-column property="realName" label="姓名" width="80">
             </el-table-column>
-            <el-table-column property="idCard" label="身份证号码">
+            <el-table-column property="identityCard" label="身份证号码" width="180">
             </el-table-column>
             <el-table-column
-                property="releasesNum"
+                property="dynamicAmount"
                 label="发布内容数"
                 width="100"
             >
             </el-table-column>
-            <el-table-column property="nftNum" label="NFT数" width="80">
+            <el-table-column property="nftAmount" label="NFT数" width="80">
             </el-table-column>
-            <el-table-column property="balance" label="余额" width="80">
+            <el-table-column property="remainingSum" label="余额" width="80">
             </el-table-column>
-            <el-table-column property="inviteNum" label="邀请人数" width="80">
+            <el-table-column property="remainingSum" label="邀请人数" width="80">
             </el-table-column>
             <el-table-column
                 property="registerDate"
                 label="注册时间"
-                width="180"
+                width="160"
             >
             </el-table-column>
             <el-table-column
-                property="registerSource"
+                property="source"
                 label="注册来源"
                 width="120"
             >
-            </el-table-column>
-            <el-table-column label="操作" width="100">
-                <template slot-scope="scope">
-                    <!-- <el-button size="mini">操作</el-button> -->
+            <template slot-scope="scope">
+                    {{ formatSource(parseInt(scope.row.source))}}
                 </template>
             </el-table-column>
         </el-table>
@@ -79,14 +78,17 @@
 </template>
 
 <script>
+import { queryUser } from "../../api/user";
+
 export default {
     data() {
         return {
             total: 0,
-            pageSize: 10,
+            pageSize: 1,
             currentPage: 1,
             input: '',
-            tableData: [
+            loading: false,
+            userList: [
                 {
                     userId: 1,
                     nickName: "k",
@@ -138,13 +140,40 @@ export default {
             ],
         };
     },
+    created(){
+        this.queryUser();
+    },
     methods:{
+        queryUser(){
+            this.loading = true;
+            queryUser({
+                pageNum: this.currentPage,
+                pageSize: this.pageSize,
+            }).then((res) => {
+                console.log(res);
+                this.total = res.data.total;
+                this.userList = res.data.list;
+                this.loading = false;
+            }).catch(err => {
+                this.loading = false;
+            })
+        },
         handleChange(current) {
-            console.log(current);
             this.currentPage = current;
+            this.queryUser();
         },
         handleSearch(){
             console.log(this.input);
+        },
+        formatSource(source){
+            switch (source) {
+                case 1:
+                    return '小程序';
+                case 2:
+                    return 'H5';
+                case 3:
+                    return '管理界面';
+            }
         }
 
     }
