@@ -5,7 +5,7 @@ const dynamicRouter = {
     component: Layout,
     redirect: '/dynamic/trends',
     name: 'Dynamic',
-    meta: { title: '动态 NFT', icon: 'el-icon-s-help' },
+    meta: { title: '动态 NFT', icon: 'el-icon-s-help',roles: ['admin'] },
     children: [
       {
         path: 'trends',

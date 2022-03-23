@@ -115,3 +115,8 @@ export function param2Obj(url) {
   })
   return obj
 }
+
+export function formatIntDate(time){
+  return `${time.slice(0,4)}-${time.slice(4,6)}-${time.slice(6,8)} ${time.slice(8,10)}:${time.slice(10,12)}:${time.slice(12,14)}`
+}
+

@@ -5,7 +5,7 @@ const releaseRouter = {
     component: Layout,
     redirect: '/release/release-agency-nft',
     name: 'Release',
-    meta: { title: '发布', icon: 'el-icon-s-help' },
+    meta: { title: '发布', icon: 'el-icon-s-help',roles: ['agency'] },
     children: [
       {
         path: 'release-agency-nft',
@@ -32,11 +32,12 @@ const releaseRouter = {
         hidden: true,
         name: 'Detail-Agency-Nft',
         component: () => import('@/views/release/agency-nft/detail-agency-nft.vue'),
-        meta: { title: '查看机构NFT', icon: 'table' }
+        meta: { title: '查看机构NFT', icon: 'table'  }
       },
       {
         path: 'release-personal-nft',
         name: 'Release-Personal-Nft',
+        hidden: true,
         component: () => import('@/views/release/personal-nft/index.vue'),
         meta: { title: '个人发布NFT', icon: 'table' }
       }

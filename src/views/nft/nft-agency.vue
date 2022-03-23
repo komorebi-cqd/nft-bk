@@ -9,7 +9,11 @@
         >
             <el-table-column property="nftRecording" label="NFT ID" width="80">
             </el-table-column>
-            <el-table-column property="institutionName" label="机构名称" width="80">
+            <el-table-column
+                property="institutionName"
+                label="机构名称"
+                width="80"
+            >
             </el-table-column>
 
             <el-table-column property="nftPrice" label="价格" width="80">
@@ -18,9 +22,13 @@
             <el-table-column property="nftQuantity" label="发售次数" width="80">
             </el-table-column>
 
-            <el-table-column property="nftSurplusQuantity" label="已售次数" width="80">
+            <el-table-column
+                property="nftSurplusQuantity"
+                label="已售次数"
+                width="80"
+            >
                 <template slot-scope="scope">
-                    {{ scope.row.nftQuantity - scope.row.nftSurplusQuantity  }}
+                    {{ scope.row.nftQuantity - scope.row.nftSurplusQuantity }}
                 </template>
             </el-table-column>
 
@@ -45,15 +53,23 @@
             </el-table-column>
             <el-table-column property="commentAmount" label="评论" width="80">
             </el-table-column>
-            <el-table-column property="browseAmount" label="浏览次数" width="80">
+            <el-table-column
+                property="browseAmount"
+                label="浏览次数"
+                width="80"
+            >
             </el-table-column>
-            <el-table-column property="nftType" label="状态" width="80">
+            <el-table-column property="nftStatus" label="状态" width="80">
                 <template slot-scope="scope">
-                    {{ formatState(scope.row.nftType) }}
+                    {{ formatState(parseInt(scope.row.nftStatus)) }}
                 </template>
             </el-table-column>
 
-            <el-table-column property="nftReleaseTime" label="发售时间" width="180">
+            <el-table-column
+                property="nftReleaseTime"
+                label="发售时间"
+                width="180"
+            >
             </el-table-column>
 
             <el-table-column
@@ -65,7 +81,9 @@
 
             <el-table-column label="操作" width="80">
                 <template slot-scope="scope">
-                    <el-button size="mini" @click="goDetail(scope.row)">查看</el-button>
+                    <el-button size="mini" @click="goDetail(scope.row)"
+                        >查看</el-button
+                    >
                 </template>
             </el-table-column>
         </el-table>
@@ -100,8 +118,6 @@
             class="pagination"
         >
         </el-pagination>
-
-        
     </div>
 </template>
 
@@ -122,23 +138,25 @@ export default {
             recentList: [],
         };
     },
-    created(){
+    created() {
         this.getRecentNft();
     },
     methods: {
         //获取机构NFT信息
-        getRecentNft(){
+        getRecentNft() {
             this.loading = true;
             queryRecentNft({
                 pageNum: this.currentPage,
                 pageSize: this.pageSize,
-            }).then((res) => {
-                this.total = res.data.total;
-                this.recentList = res.data.list;
-                this.loading = false;
-            }).catch(err => {
-                this.loading = false;
-            });
+            })
+                .then((res) => {
+                    this.total = res.data.total;
+                    this.recentList = res.data.list;
+                    this.loading = false;
+                })
+                .catch((err) => {
+                    this.loading = false;
+                });
         },
         //查看动态文件
         lookTrends(file) {
@@ -160,18 +178,18 @@ export default {
             }
         },
         //去详情页面
-        goDetail(data){
+        goDetail(data) {
             this.$router.push({
-                name: 'Agency-Detail',
+                name: "Agency-Detail",
                 params: {
                     detailId: 666,
-                    data
-                }
-            })
+                    data,
+                },
+            });
         },
         handleChange(current) {
-            console.log(current);
             this.currentPage = current;
+            this.getRecentNft();
         },
     },
 };

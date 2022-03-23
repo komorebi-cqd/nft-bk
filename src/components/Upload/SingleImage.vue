@@ -5,16 +5,17 @@
             :multiple="false"
             :show-file-list="false"
             :on-success="handleImageSuccess"
+            :http-request="uploadImage"
             class="image-uploader"
             drag
-            action="https://httpbin.org/post"
+            action="string"
         >
             <i class="el-icon-upload" />
             <div class="el-upload__text">
                 将文件拖到此处，或<em>点击上传</em>
             </div>
         </el-upload>
-        <!-- <div class="image-preview image-app-preview">
+        <!-- <div class="image-preview">
             <div v-show="imageUrl.length > 1" class="image-preview-wrapper">
                 <img :src="imageUrl" />
                 <div class="image-preview-action">
@@ -23,8 +24,8 @@
             </div>
         </div> -->
         <div class="image-preview">
-            <div v-show="imageUrl.length > 1" class="image-preview-wrapper">
-                <img :src="imageUrl" />
+            <div v-show="prImg" class="image-preview-wrapper">
+                <img :src="prImg" />
                 <div class="image-preview-action">
                     <i class="el-icon-delete" @click="rmImage" />
                 </div>
@@ -34,12 +35,11 @@
 </template>
 
 <script>
-
 export default {
     name: "SingleImageUpload",
     props: {
         value: {
-            type: String,
+            type: String | Object,
             default: "",
         },
     },
@@ -47,6 +47,7 @@ export default {
         return {
             tempUrl: "",
             dataObj: { token: "", key: "" },
+            prImg: ''
         };
     },
     computed: {
@@ -57,6 +58,7 @@ export default {
     methods: {
         rmImage() {
             this.emitInput("");
+            this.prImg = ''
         },
         emitInput(val) {
             this.$emit("input", val);
@@ -64,6 +66,18 @@ export default {
         handleImageSuccess(file) {
             console.log(file);
             this.emitInput(file.files.file);
+        },
+        uploadImage(param) {
+            //实时预览图片
+            let fr = new FileReader();
+            fr.onload = () => {
+                this.prImg = fr.result;
+            };
+            fr.readAsDataURL(param.file);
+            //生成图片文件
+
+            this.emitInput(param.file);
+
         },
         beforeUpload() {
             // const _self = this;
@@ -100,6 +114,7 @@ export default {
         width: 200px;
         height: 200px;
         float: left;
+        padding-bottom: 20px;
     }
     .image-preview {
         width: 200px;

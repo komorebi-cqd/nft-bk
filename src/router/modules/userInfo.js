@@ -5,7 +5,7 @@ const userInfoRouter = {
     component: Layout,
     redirect: '/user-info/user',
     name: 'User-Info',
-    meta: { title: '用户', icon: 'el-icon-s-help' },
+    meta: { title: '用户', icon: 'el-icon-s-help',roles: ['admin'] },
     children: [
       {
         path: 'user',

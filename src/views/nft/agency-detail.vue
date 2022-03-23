@@ -59,15 +59,15 @@
             </li>
             <li>
                 <div class="left-title">浏览次数</div>
-                <div class="right-content">{{ nftDetail.browseNums }}</div>
+                <div class="right-content">{{ nftDetail.browseAmount }}</div>
             </li>
             <li>
                 <div class="left-title">发布时间</div>
-                <div class="right-content">{{ nftDetail.registerDate }}</div>
+                <div class="right-content">{{ formatIntDate(nftDetail.registerDate) }}</div>
             </li>
             <li>
                 <div class="left-title">发售时间</div>
-                <div class="right-content">{{ nftDetail.nftReleaseTime }}</div>
+                <div class="right-content">{{ formatIntDate(nftDetail.nftReleaseTime) }}</div>
             </li>
         </ul>
         <el-button type="primary" @click="goBack">返回</el-button>
@@ -75,6 +75,7 @@
 </template>
 
 <script>
+import { formatIntDate } from "@/utils/index";
 export default {
     data() {
         return {
@@ -82,9 +83,10 @@ export default {
         };
     },
     created() {
-        this.nftDetail = this.$route.params.data;
+        this.nftDetail =this.$route.params&& this.$route.params.data;
     },
     methods: {
+        formatIntDate,
         //格式化状态
         formatState(state) {
             switch (state) {

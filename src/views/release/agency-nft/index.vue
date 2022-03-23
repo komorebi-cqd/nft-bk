@@ -6,20 +6,40 @@
             >
         </div>
         <el-table
-            :data="tableData"
+            :data="agencyNftList"
             highlight-current-row
             border
             style="width: 100%"
+            v-loading="loading"
         >
-            <el-table-column property="nftId" label="NFT ID" width="80">
+            <el-table-column property="nftRecording" label="NFT ID" width="80">
             </el-table-column>
-            <el-table-column property="agencyName" label="机构名称" width="120">
+            <el-table-column
+                property="institutionName"
+                label="机构名称"
+                width="80"
+            >
             </el-table-column>
-            <el-table-column property="price" label="价格" width="120">
+
+            <el-table-column property="nftPrice" label="价格" width="80">
             </el-table-column>
-            <el-table-column property="type" label="动态类型" width="120">
+
+            <el-table-column property="nftQuantity" label="发售次数" width="80">
+            </el-table-column>
+
+            <el-table-column
+                property="nftSurplusQuantity"
+                label="已售次数"
+                width="80"
+            >
                 <template slot-scope="scope">
-                    {{ scope.row.type === 0 ? "图片" : "视频" }}
+                    {{ scope.row.nftQuantity - scope.row.nftSurplusQuantity }}
+                </template>
+            </el-table-column>
+
+            <el-table-column property="trendsType" label="动态类型" width="80">
+                <template slot-scope="scope">
+                    {{ scope.row.trendsType === 0 ? "待修改" : "待修改" }}
                 </template>
             </el-table-column>
             <el-table-column property="trendsFile" label="媒体文件" width="80">
@@ -32,55 +52,65 @@
                     >
                 </template>
             </el-table-column>
-            <el-table-column property="describe" label="描述">
+            <el-table-column property="nftDetails" label="描述">
             </el-table-column>
-            <el-table-column property="saleNums" label="售卖数量" width="80">
+            <el-table-column property="likeAmount" label="点赞" width="80">
             </el-table-column>
-            <el-table-column property="soldNums" label="已售数量" width="80">
+            <el-table-column property="commentAmount" label="评论" width="80">
             </el-table-column>
             <el-table-column
-                property="transferWaiting"
-                label="转赠等待"
+                property="browseAmount"
+                label="浏览次数"
                 width="80"
             >
             </el-table-column>
-            <el-table-column
-                property="resellWaiting"
-                label="转卖等待"
-                width="80"
-            >
-            </el-table-column>
-            <el-table-column property="thumbsUp" label="点赞" width="60">
-            </el-table-column>
-            <el-table-column property="comment" label="评论" width="60">
-            </el-table-column>
-            <el-table-column property="browseNums" label="浏览次数" width="60">
-            </el-table-column>
-            <el-table-column property="state" label="状态" width="60">
+            <el-table-column property="nftStatus" label="状态" width="80">
                 <template slot-scope="scope">
-                    {{ formatState(scope.row.state) }}
+                    {{ formatState(parseInt(scope.row.nftStatus)) }}
                 </template>
             </el-table-column>
+
             <el-table-column
-                property="releaseDate"
+                property="nftReleaseTime"
+                label="发售时间"
+                width="180"
+            >
+                <template slot-scope="scope">
+                    {{ formatIntDate(scope.row.nftReleaseTime) }}
+                </template>
+            </el-table-column>
+
+            <el-table-column
+                property="registerDate"
                 label="发布时间"
                 width="180"
             >
+                <template slot-scope="scope">
+                    {{ formatIntDate(scope.row.registerDate) }}
+                </template>
             </el-table-column>
 
-            <el-table-column label="操作" width="160">
+            <el-table-column label="操作" width="80">
                 <template slot-scope="scope">
-                    <el-button size="mini" @click="goDetail(scope.row)">查看</el-button>
-                    <el-button size="mini" @click="goEdit(scope.row)">编辑</el-button>
+                    <el-button
+                        size="mini"
+                        @click="
+                            showModifyView(
+                                parseInt(scope.row.nftStatus),
+                                scope.row.nftRecording
+                            )
+                        "
+                        >修改状态</el-button
+                    >
                     <el-popconfirm
                         confirm-button-text="删除"
                         cancel-button-text="点错了"
                         icon="el-icon-info"
                         icon-color="red"
-                        title="你确定要删除这个NFT吗？"
-                        @confirm="deleteTrends(scope.row.trendsId)"
+                        title="你确定要删除这个动态吗？"
+                        @confirm="deleteTrends(scope.row.nftRecording)"
                     >
-                        <el-button slot="reference" size="mini">删除</el-button>
+                        <el-button slot="reference">删除</el-button>
                     </el-popconfirm>
                 </template>
             </el-table-column>
@@ -105,6 +135,31 @@
             </span>
         </el-dialog>
 
+        <el-dialog
+            title="修改NFT状态"
+            :visible.sync="modifyStateVisible"
+            width="30%"
+            center
+        >
+            <el-select v-model="defaultState" placeholder="请选择">
+                <el-option
+                    v-for="item in stateOptions"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value"
+                >
+                </el-option>
+            </el-select>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="modifyStateVisible = false"
+                    >取消修改</el-button
+                >
+                <el-button type="primary" @click="confirmModifyState"
+                    >确认修改</el-button
+                >
+            </span>
+        </el-dialog>
+
         <el-pagination
             background
             layout="prev, pager, next"
@@ -120,87 +175,109 @@
 </template>
 
 <script>
+import {
+    queryNftByUnionId,
+    deleteNftByUnionId,
+    modifyStateAgency,
+} from "@/api/nft";
+import { formatIntDate } from "@/utils/index";
+
 export default {
     data() {
         return {
             total: 0,
-            pageSize: 10,
+            pageSize: 1,
             currentPage: 1,
             input: "",
+            loading: false,
             trendsView: false,
             trendsViewFile: "",
             trendsViewFileType: 0,
-            tableData: [
+            agencyNftList: [],
+            modifyStateVisible: false,
+            stateOptions: [
                 {
-                    nftId: 1,
-                    agencyName: "北湖南博物馆",
-                    price: 666,
-                    type: 0, //0图片 1视频
-                    main_img: "https://img1.baidu.com/it/u=3944616627,2787035505&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=521",
-                    content_img: "https://img1.baidu.com/it/u=3944616627,2787035505&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=521",
-                    describe: "人间清醒人间清醒人间清醒人间清醒",
-                    saleNums: 666,
-                    soldNums: 222,
-                    transferWaiting: 10,
-                    resellWaiting: 10,
-                    thumbsUp: 666,
-                    comment: 9999,
-                    browseNums: 5,
-                    state: 0,
-                    saleDate: "2022-02-21 17:10:42",
-                    releaseDate: "2022-02-21 17:10:42",
+                    value: 0,
+                    label: "下架",
                 },
                 {
-                    nftId: 1,
-                    agencyName: "北京博物馆",
-                    price: 666,
-                    type: 0, //0图片 1视频
-                    main_img: "https://img1.baidu.com/it/u=3944616627,2787035505&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=521",
-                    content_img: "https://img1.baidu.com/it/u=3944616627,2787035505&fm=253&fmt=auto&app=138&f=JPEG?w=500&h=521",
-                    describe: "人间清醒",
-                    saleNums: 888,
-                    soldNums: 222,
-                    transferWaiting: 99,
-                    resellWaiting: 1,
-                    thumbsUp: 666,
-                    comment: 9999,
-                    browseNums: 5,
-                    state: 0,
-                    saleDate: "2022-02-21 17:10:42",
-                    releaseDate: "2022-02-21 17:10:42",
+                    value: 1,
+                    label: "挂售中",
+                },
+                {
+                    value: 4,
+                    label: "仅展示",
                 },
             ],
+            tempInfo: {
+                nftStatus: "",
+                nftRecording: "",
+            },
+            defaultState: "",
         };
     },
+    created() {
+        this.getAgencyNft();
+    },
     methods: {
+        showModifyView(state, nftRecording) {
+            this.defaultState = state;
+            this.tempInfo.nftStatus = state;
+            this.tempInfo.nftRecording = nftRecording;
+            this.modifyStateVisible = true;
+        },
+        formatIntDate,
+        //获取用户机构NFT信息
+        getAgencyNft() {
+            this.loading = true;
+            queryNftByUnionId({
+                pageNum: this.currentPage,
+                pageSize: this.pageSize,
+            })
+                .then((res) => {
+                    this.total = res.data.total;
+                    this.agencyNftList = res.data.list;
+                    this.loading = false;
+                })
+                .catch((err) => {
+                    this.loading = false;
+                });
+        },
         //删除动态
-        deleteTrends(id) {
-            console.log("删除动态id", id);
-
-            this.$message({
-                message: "删除成功",
-                type: "success",
+        deleteTrends(nftRecording) {
+            console.log("删除动态id", nftRecording);
+            deleteNftByUnionId({ nftRecording }).then((res) => {
+                this.getAgencyNft();
+                this.$message({
+                    message: "删除成功",
+                    type: "success",
+                });
             });
         },
         //查看动态文件
         lookTrends(file) {
-            this.trendsViewFile = file.file;
-            this.trendsViewFileType = file.type;
+            this.trendsViewFile = file.nftFilePath;
+            this.trendsViewFileType = 0;
             this.trendsView = true;
         },
         handleChange(current) {
             console.log(current);
             this.currentPage = current;
+            this.getAgencyNft();
         },
-        //格式化订单状态
+        //格式化状态
         formatState(state) {
             switch (state) {
                 case 0:
-                    return "失败";
+                    return "下架";
                 case 1:
-                    return "成功";
+                    return "挂售中";
                 case 2:
-                    return "待支付";
+                    return "待发售";
+                case 3:
+                    return "售罄";
+                case 4:
+                    return "仅展示";
             }
         },
         //添加NFT
@@ -214,18 +291,25 @@ export default {
             this.$router.push({
                 name: "Detail-Agency-Nft",
                 params: {
-                    data
-                }
+                    data,
+                },
             });
         },
-        //编辑NFT详情
-        goEdit(data) {
-            console.log(data,'goEdit');
-            this.$router.push({
-                name: "Edit-Agency-Nft",
-                params: {
-                    data
-                }
+        //修改状态
+        confirmModifyState() {
+            if (this.defaultState === this.tempInfo.nftStatus) {
+                this.modifyStateVisible = false;
+            }
+            modifyStateAgency({
+                nftRecording: this.tempInfo.nftRecording,
+                nftStatus: this.defaultState,
+            }).then(res => {
+                this.modifyStateVisible = false;
+                this.getAgencyNft();
+                this.$message({
+                    message: "修改成功",
+                    type: "success",
+                });
             });
         },
     },

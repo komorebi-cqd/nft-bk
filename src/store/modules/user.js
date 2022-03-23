@@ -6,6 +6,7 @@ const getDefaultState = () => {
   return {
     user: null, //用户信息  0是管理用户  1是机构用户
     roles: [],  //
+    userInfo: localStorage.getItem('userInfo') || '',
   }
 }
 
@@ -29,6 +30,9 @@ const mutations = {
   },
   SET_ROLES: (state, roles) => {
     state.roles = roles;
+  },
+  SET_USER_INFO: (state, info) => {
+    state.userInfo = info;
   }
 }
 
@@ -49,13 +53,16 @@ const actions = {
         password
       }).then(res => {
         const { data } = res;
-        // if (parseInt(data.visitAuthority) === 0) {
-        //   commit('SET_ROLES', ['admin'])
-        // }else if(parseInt(data.visitAuthority) === 1){
-        //   commit('SET_ROLES', ['agency'])
-        // }else{
-        //   return reject('Permission verification failed.')
-        // }
+        console.log(data,111);
+        if (parseInt(data.visitAuthority) === 0) {
+          commit('SET_USER_INFO', 0)
+          localStorage.setItem('userInfo',0)
+        }else if(parseInt(data.visitAuthority) === 1){
+          commit('SET_USER_INFO', 1)
+          localStorage.setItem('userInfo',1)
+        }else{
+          return reject('Permission verification failed.')
+        }
         resolve()
       }).catch(error => {
         reject(error)

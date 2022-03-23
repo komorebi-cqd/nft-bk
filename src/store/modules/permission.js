@@ -42,12 +42,12 @@ const actions = {
         return new Promise(resolve => {
             let accessedRoutes
             //超级管理员为admin角色，能访问所有路由
-            if (roles.includes('admin')) {
-                console.log(1111);
-                accessedRoutes = asyncRouters || []
-            } else {
-                accessedRoutes = filterAsyncRoutes(asyncRouters, roles)
-            }
+            // if (roles.includes('admin')) {
+            //     accessedRoutes = asyncRouters || []
+            // } else {
+            //     accessedRoutes = filterAsyncRoutes(asyncRouters, roles)
+            // }
+            accessedRoutes = filterAsyncRoutes(asyncRouters, roles)
             commit('SET_ROUTES', accessedRoutes)
             resolve(accessedRoutes)
         })

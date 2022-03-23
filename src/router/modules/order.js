@@ -11,13 +11,13 @@ const orderRouter = {
             path: 'agency-order',
             name: 'Agency-Order',
             component: () => import('@/views/order/agency-order.vue'),
-            meta: { title: '机构NFT', icon: 'table' }
+            meta: { title: '机构订单NFT', icon: 'table',roles: ['agency'] }
         },
         {
             path: 'personal-order',
             name: 'Personal-Order',
             component: () => import('@/views/order/personal-order.vue'),
-            meta: { title: '个人NFT', icon: 'tree' }
+            meta: { title: '个人订单NFT', icon: 'tree',roles: ['admin'] }
         }
     ]
 };
