@@ -29,6 +29,13 @@
             </li>
 
             <li>
+                <div class="left-title">描述图</div>
+                <div class="right-content">
+                    <img class="main-img" :src="nftDetail.contentDescriptionChart" alt="">
+                </div>
+            </li>
+
+            <li>
                 <div class="left-title">描述</div>
                 <div class="right-content">{{ nftDetail.nftDetails }}</div>
             </li>
@@ -113,6 +120,7 @@ export default {
     text-align: center;
     width: 80%;
     margin: 0 auto;
+    padding-bottom: 40px;
 }
 .detail-list {
     list-style: none;
@@ -136,5 +144,9 @@ export default {
             color: #606266;
         }
     }
+}
+.main-img{
+    height: 150px;
+    width: auto;
 }
 </style>

@@ -77,9 +77,14 @@ service.interceptors.response.use(
     }
   },
   error => {
-    console.log(error.code) // for debug
+    if(error.response.status === 401){
+      if(parseInt(store.getters.userInfo) === 1){
+        
+      }
+    }
+
     Message({
-      message: error.msg || 'Has Error',
+      message:error.response.status === 401 ? 'token question,please login again' : error.msg || 'Has Error',
       type: 'error',
       duration: 5 * 1000
     })

@@ -9,7 +9,7 @@
                         label="主图："
                         style="margin-bottom: 30px"
                     >
-                        <Upload v-model="postForm.nft" />
+                        <Upload v-model="postForm.nft" :isAllowVideo="true"/>
                     </el-form-item>
                 </el-col>
                 <el-col :span="12">
@@ -19,7 +19,7 @@
                         label="内容描述图："
                         style="margin-bottom: 30px"
                     >
-                        <Upload v-model="postForm.describe" />
+                        <Upload v-model="postForm.describe"  />
                     </el-form-item>
                 </el-col>
             </el-row>
@@ -262,7 +262,11 @@ export default {
             for (const key in this.postForm) {
                 formData.append(key, this.postForm[key]);
             }
-            methods(formData);
+            methods(formData).then(res => {
+                this.$router.push({
+                    name: 'Release-Agency-Nft'
+                })
+            });
         },
         submitForm(formName) {
             this.postAgencyNft();

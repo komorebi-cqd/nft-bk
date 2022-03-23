@@ -1,11 +1,11 @@
 <template>
     <div class="upload-container">
         <el-upload
-            :data="dataObj"
             :multiple="false"
             :show-file-list="false"
             :on-success="handleImageSuccess"
             :http-request="uploadImage"
+            :before-upload="beforeAvatarUpload"
             class="image-uploader"
             drag
             action="string"
@@ -15,20 +15,25 @@
                 将文件拖到此处，或<em>点击上传</em>
             </div>
         </el-upload>
-        <!-- <div class="image-preview">
-            <div v-show="imageUrl.length > 1" class="image-preview-wrapper">
-                <img :src="imageUrl" />
-                <div class="image-preview-action">
-                    <i class="el-icon-delete" @click="rmImage" />
-                </div>
-            </div>
-        </div> -->
-        <div class="image-preview">
+        <div class="image-preview" v-if="!currentFileType">
             <div v-show="prImg" class="image-preview-wrapper">
                 <img :src="prImg" />
                 <div class="image-preview-action">
                     <i class="el-icon-delete" @click="rmImage" />
                 </div>
+            </div>
+        </div>
+
+        <div class="image-preview" v-else>
+            <div v-show="prVideo" class="image-preview-wrapper">
+                <video
+                    v-if="prVideo"
+                    :src="prVideo"
+                    class="avatar video-avatar"
+                    controls="controls"
+                >
+                    您的浏览器不支持视频播放
+                </video>
             </div>
         </div>
     </div>
@@ -42,12 +47,19 @@ export default {
             type: String | Object,
             default: "",
         },
+        //是否允许上传视频
+        isAllowVideo: {
+            type: Boolean,
+            default: false,
+        },
     },
     data() {
         return {
             tempUrl: "",
             dataObj: { token: "", key: "" },
-            prImg: ''
+            prImg: "", //预览图片
+            prVideo: "", //预览视频
+            currentFileType: 0, //0是图片  1是视频
         };
     },
     computed: {
@@ -58,26 +70,80 @@ export default {
     methods: {
         rmImage() {
             this.emitInput("");
-            this.prImg = ''
+            this.prImg = "";
         },
         emitInput(val) {
             this.$emit("input", val);
+        },
+        beforeAvatarUpload(file) {
+            let isMeetfile; //是否是可上传的文件类型
+            let isMeetSize; //是否是规定大小
+            const allowFile = [
+                "image/jpeg",
+                "image/jpg",
+                "image/png",
+                "video/mp4",
+                "video/ogg",
+                "video/flv",
+                "video/avi",
+                "video/wmv",
+                "video/rmvb",
+                "video/mov",
+            ]; //可上传文件类型列表
+            const allowVideoFile = [
+                "video/mp4",
+                "video/ogg",
+                "video/flv",
+                "video/avi",
+                "video/wmv",
+                "video/rmvb",
+                "video/mov",
+            ];
+            if (allowFile.indexOf(file.type) === -1) {
+                isMeetfile = false;
+                this.$message.error("上传的文件格式不对");
+            } else {
+                if (
+                    allowVideoFile.indexOf(file.type) !== -1
+                ) {
+                    this.currentFileType = 1; //上传的是视频
+                } else {
+                    this.currentFileType = 0; //上传的是图片
+                }
+                isMeetfile = true;
+            }
+            if(!this.isAllowVideo && allowVideoFile.indexOf(file.type) !== -1){
+                this.$message.error("描述图不能为视频");
+                isMeetfile = false;
+            }
+            if (file.size / 1024 / 1024 > 50) {
+                isMeetSize = false;
+                this.$message.error("文件大小不能超过50M");
+            } else {
+                isMeetSize = true;
+            }
+            console.log(file, "beforeAvatarUpload");
+            return isMeetSize && isMeetfile;
         },
         handleImageSuccess(file) {
             console.log(file);
             this.emitInput(file.files.file);
         },
         uploadImage(param) {
-            //实时预览图片
+            console.log(param, "param:::");
+            //实时预览图片和视频
             let fr = new FileReader();
             fr.onload = () => {
-                this.prImg = fr.result;
+                console.log(this.currentFileType);
+                if (this.currentFileType) {
+                    this.prVideo = fr.result;
+                } else {
+                    this.prImg = fr.result;
+                }
             };
             fr.readAsDataURL(param.file);
             //生成图片文件
-
             this.emitInput(param.file);
-
         },
         beforeUpload() {
             // const _self = this;
@@ -174,5 +240,9 @@ export default {
             color: #fff;
         }
     }
+}
+.video-avatar {
+    width: 198px;
+    max-height: 198px;
 }
 </style>

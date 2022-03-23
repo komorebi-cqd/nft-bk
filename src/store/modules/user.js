@@ -5,7 +5,7 @@ import { resetRouter } from '@/router'
 const getDefaultState = () => {
   return {
     user: null, //用户信息  0是管理用户  1是机构用户
-    roles: [],  //
+    roles: localStorage.getItem('roles') ? JSON.parse(localStorage.getItem('roles')) : [],  //
     userInfo: localStorage.getItem('userInfo') || '',
   }
 }
@@ -48,19 +48,27 @@ const actions = {
       loginMethod = agencyLogin;
     }
     return new Promise((resolve, reject) => {
+      console.log(loginMethod,'::::::');
       loginMethod({
         loginId,
         password
       }).then(res => {
         const { data } = res;
-        console.log(data,111);
-        if (parseInt(data.visitAuthority) === 0) {
+        let roles = [];
+        console.log(data, 111);
+        if (parseInt(data.visitAuthority) === 0) { //管理员
+          roles = ['admin'];
+          commit('SET_ROLES', roles)
           commit('SET_USER_INFO', 0)
-          localStorage.setItem('userInfo',0)
-        }else if(parseInt(data.visitAuthority) === 1){
+          localStorage.setItem('userInfo', 0)
+          localStorage.setItem('roles', JSON.stringify(roles))
+        } else if (parseInt(data.visitAuthority) === 1) { //机构
+          roles = ['agency'];
+          commit('SET_ROLES', roles)
           commit('SET_USER_INFO', 1)
-          localStorage.setItem('userInfo',1)
-        }else{
+          localStorage.setItem('userInfo', 1)
+          localStorage.setItem('roles', JSON.stringify(roles))
+        } else {
           return reject('Permission verification failed.')
         }
         resolve()
@@ -79,19 +87,18 @@ const actions = {
           return reject('Verification failed, please Login again.')
         }
         commit('SET_USER', data);
-        let roles = [];
-        console.log(data,'getInfo:::');
-        if (data.institutionName === '元界2') {
-          roles = ['admin'];
-          commit('SET_ROLES', roles)
-        } else if (data.institutionName === '元界') {
-          roles = ['agency'];
-          commit('SET_ROLES', roles)
-        } else {
-          return reject('Permission verification failed.')
-        }
-        console.log(roles,22222);
-        resolve(roles)
+        // let roles = [];
+        // console.log(data,'getInfo:::');
+        // if (data.institutionName === '元界2') {
+        //   roles = ['admin'];
+        //   commit('SET_ROLES', roles)
+        // } else if (data.institutionName === '元界') {
+        //   roles = ['agency'];
+        //   commit('SET_ROLES', roles)
+        // } else {
+        //   return reject('Permission verification failed.')
+        // }
+        resolve(state.roles)
       }).catch(error => {
         reject(error)
       })
@@ -106,6 +113,8 @@ const actions = {
       resetRouter()
       commit('SET_ROLES', [])
       commit('RESET_STATE')
+      localStorage.removeItem('roles');
+      localStorage.removeItem('userInfo');
       resolve()
     })
   },
@@ -116,6 +125,8 @@ const actions = {
       removeToken() // must remove  token  first
       commit('RESET_STATE')
       commit('SET_ROLES', [])
+      localStorage.removeItem('roles');
+      localStorage.removeItem('userInfo');
       resolve()
     })
   }

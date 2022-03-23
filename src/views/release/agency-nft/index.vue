@@ -37,12 +37,12 @@
                 </template>
             </el-table-column>
 
-            <el-table-column property="trendsType" label="动态类型" width="80">
+            <el-table-column property="nftFilePath" label="动态类型" width="80">
                 <template slot-scope="scope">
-                    {{ scope.row.trendsType === 0 ? "待修改" : "待修改" }}
+                    {{ isImg(scope.row.nftFilePath) ? "图片" : "视频" }}
                 </template>
             </el-table-column>
-            <el-table-column property="trendsFile" label="媒体文件" width="80">
+            <el-table-column property="nftFilePath" label="媒体文件" width="80">
                 <template slot-scope="scope">
                     <el-button
                         size="mini"
@@ -90,8 +90,12 @@
                 </template>
             </el-table-column>
 
-            <el-table-column label="操作" width="80">
+            <el-table-column label="操作" width="120">
                 <template slot-scope="scope">
+                     <el-button
+                        size="mini"
+                        @click="goDetail(scope.row)">查看</el-button
+                    >
                     <el-button
                         size="mini"
                         @click="
@@ -110,7 +114,7 @@
                         title="你确定要删除这个动态吗？"
                         @confirm="deleteTrends(scope.row.nftRecording)"
                     >
-                        <el-button slot="reference">删除</el-button>
+                        <el-button size="mini" slot="reference">删除</el-button>
                     </el-popconfirm>
                 </template>
             </el-table-column>
@@ -119,14 +123,10 @@
         <el-dialog
             title="动态文件"
             :visible.sync="trendsView"
-            width="60%"
+            width="50%"
             center
         >
-            <div class="trends-view-img" v-if="!trendsViewFileType">
-                <img :src="trendsViewFile" alt="" />
-            </div>
-            <div class="trends-view-img" v-else>这里是视频</div>
-
+            <ImgOrVideo :fileLink="trendsViewFile"/>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="trendsView = false">取 消</el-button>
                 <el-button type="primary" @click="trendsView = false"
@@ -181,8 +181,12 @@ import {
     modifyStateAgency,
 } from "@/api/nft";
 import { formatIntDate } from "@/utils/index";
+import ImgOrVideo from '@/components/ImgOrVideo/ImgOrVideo.vue'
 
 export default {
+    components:{
+        ImgOrVideo,
+    },
     data() {
         return {
             total: 0,
@@ -219,7 +223,13 @@ export default {
     created() {
         this.getAgencyNft();
     },
+    
     methods: {
+        isImg(type) {
+            let imgList = ["jpeg", "jpg", "png"];
+            const imgs = imgList.filter((item) => type.endsWith(item));
+            return imgs.length > 0;
+        },
         showModifyView(state, nftRecording) {
             this.defaultState = state;
             this.tempInfo.nftStatus = state;
