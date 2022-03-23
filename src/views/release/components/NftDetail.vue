@@ -56,13 +56,13 @@
                 </el-col>
                 <el-col :span="8">
                     <el-form-item
-                        prop="nftPricey"
+                        prop="nftPrice"
                         style="margin-bottom: 40px"
                         label-width="110px"
                         label="发售价格："
                     >
                         <el-input
-                            v-model="postForm.nftPricey"
+                            v-model="postForm.nftPrice"
                             type="number"
                         ></el-input>
                     </el-form-item>

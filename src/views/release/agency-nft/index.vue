@@ -73,7 +73,7 @@
             <el-table-column
                 property="nftReleaseTime"
                 label="发售时间"
-                width="180"
+                width="160"
             >
                 <template slot-scope="scope">
                     {{ formatIntDate(scope.row.nftReleaseTime) }}
@@ -83,7 +83,7 @@
             <el-table-column
                 property="registerDate"
                 label="发布时间"
-                width="180"
+                width="160"
             >
                 <template slot-scope="scope">
                     {{ formatIntDate(scope.row.registerDate) }}
@@ -190,7 +190,7 @@ export default {
     data() {
         return {
             total: 0,
-            pageSize: 1,
+            pageSize: 10,
             currentPage: 1,
             input: "",
             loading: false,
