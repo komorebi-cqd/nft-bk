@@ -38,15 +38,15 @@ module.exports = {
     },
     // before: require('./mock/mock-server.js')
     proxy: {
-      '/institutionAccount': {
+      '^/institutionAccount': {
         target: 'http://192.168.3.122:8089',
         changeOrigin: true
       },
-      '/user': {
+      '^/user': {
         target: 'http://192.168.3.122:8089',
         changeOrigin: true
       },
-      '/nft': {
+      '^/nft': {
         target: 'http://192.168.3.122:8089',
         changeOrigin: true
       }
